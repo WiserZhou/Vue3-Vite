@@ -7,7 +7,7 @@
 
 <script setup>
 import * as echarts from 'echarts';
-import baseAxios from '@/api/baseAxios';
+import apiAxios from '@/api/ApiAxios.js';
 import { onMounted, ref } from 'vue';
 let echart = echarts;
 // 初始化genderchart
@@ -15,7 +15,7 @@ async function initGenderChart() {
     let label = [];
     let data = [];
     try{
-        const res = await baseAxios({
+        const res = await apiAxios({
             url: "/student/genderCount",
             method: 'get'
         })
@@ -87,7 +87,7 @@ async function initeducationChart() {
     let label = [];
     let data = [];
     try{
-        const res = await baseAxios({
+        const res = await apiAxios({
             url: "/student/educationCount",
             method: 'get'
         })

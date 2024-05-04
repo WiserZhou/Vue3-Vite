@@ -161,7 +161,7 @@
 import ContentHeader from '../../components/ContentHeader.vue';
 import { ElMessage } from 'element-plus';
 import { reactive, ref } from 'vue'
-import baseAxios from '@/api/baseAxios';
+import apiAxios from '@/api/ApiAxios.js';
 // 校验规则
 function validateName(rule, value) {
   // 使用正则表达式验证输入是否只包含汉字、数字、字母
@@ -235,7 +235,7 @@ const formLabelWidth = '140px'
 let empOptions = [];
 let empMap = {};
 function getEmpList(){
-    baseAxios({
+    apiAxios({
         url: '/emps/all',
         method: 'get',
     }).then(res => {
@@ -272,7 +272,7 @@ function getClassList(){
         end: formInline.endTime[1],
     }
     console.log(params);
-    baseAxios({
+    apiAxios({
         url: '/class',
         method: 'get',
         params
@@ -305,7 +305,7 @@ async function handleSave(formEl){
                 method = 'put';
             }
             console.log(form.value);
-            baseAxios({
+            apiAxios({
                 url: "/class",
                 method: method,
                 data: form.value,
@@ -346,7 +346,7 @@ function handleAdd(){
 // 编辑
 const handleEdit = (index, row) => {
     console.log(index, row)
-    baseAxios({
+    apiAxios({
         url: "/class/" + row.id,
         method: 'get',
     }).then(res => {
@@ -365,7 +365,7 @@ const handleDelete = (index, row) => {
     dialogVisible.value = true;
 }
 function confirmDelete(){
-    baseAxios({
+    apiAxios({
         url: "/class/" + temp_id.value,
         method: "delete",
     }).then(res => {

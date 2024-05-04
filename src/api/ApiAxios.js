@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useRouter } from 'vue-router';
-export default function baseAxios(axiosConfig) {
+export default function apiAxios(axiosConfig) {
     const router = useRouter();
     const service = axios.create({
         baseURL: 'http://127.0.0.1:8080',

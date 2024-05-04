@@ -163,7 +163,7 @@
 
 <script setup>
 import ContentHeader from '../../components/ContentHeader.vue';
-import baseAxios from '@/api/baseAxios';
+import apiAxios from '@/api/ApiAxios.js';
 import { ElMessage } from 'element-plus';
 import { reactive, ref } from 'vue';
 import moment from 'moment';
@@ -187,7 +187,7 @@ let arrangedOptions = [
 let empOptions = ref([]);
 let empMap = {};
 function getEmpList(){
-    baseAxios({
+    apiAxios({
         url: '/emps/all',
         method: 'get',
     }).then(res => {
@@ -234,7 +234,7 @@ function getCourseList(){
         teacher: formInline.teacher
     }
     console.log(params);
-    baseAxios({
+    apiAxios({
         url: '/courseArrange',
         method: 'get',
         params
@@ -297,7 +297,7 @@ const formLabelWidth = '140px'
     // 对按钮的处理
 function handleSave(){
     console.log(form.value);
-    baseAxios({
+    apiAxios({
         url: "/courseArrange",
         method: 'post',
         data: {
@@ -360,7 +360,7 @@ function confirmDelete(type){
     }else{
         ids = temp_id.value;
     }
-    baseAxios({
+    apiAxios({
         url: "/course/" + ids,
         method: "delete",
     }).then(res => {

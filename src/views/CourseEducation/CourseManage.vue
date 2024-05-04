@@ -189,7 +189,7 @@
 
 <script setup>
 import ContentHeader from '../../components/ContentHeader.vue';
-import baseAxios from '@/api/baseAxios';
+import apiAxios from '@/api/ApiAxios.js';
 import { ElMessage } from 'element-plus';
 import { reactive, ref } from 'vue';
 import moment from 'moment';
@@ -365,7 +365,7 @@ function getCourseList(){
         type: formInline.type
     }
     console.log(params);
-    baseAxios({
+    apiAxios({
         url: '/course',
         method: 'get',
         params
@@ -422,7 +422,7 @@ async function handleSave(formEl){
                 method = 'put';
             }
             console.log(form.value);
-            baseAxios({
+            apiAxios({
                 url: "/course",
                 method: method,
                 data: form.value,
@@ -478,7 +478,7 @@ const handleSelectionChange = (val) => {
 }
 const handleEdit = (index, row) => {
     console.log(index, row)
-    baseAxios({
+    apiAxios({
         url: "/course/" + row.id,
         method: 'get',
     }).then(res => {
@@ -508,7 +508,7 @@ function confirmDelete(type){
     }else{
         ids = temp_id.value;
     }
-    baseAxios({
+    apiAxios({
         url: "/course/" + ids,
         method: "delete",
     }).then(res => {

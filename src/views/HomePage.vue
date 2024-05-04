@@ -2,29 +2,29 @@
   <div class="common-layout">
     <el-container>
       <el-header class="header">
-        <div class="log-out">
+        <div class="logout-button">
           <el-icon>
             <EditPen/>
           </el-icon>
           <p>修改密码</p>
         </div>
-        <div class="log-out" @click="loginOut">
+        <div class="logout-button" @click="logout">
           <el-icon>
             <SwitchButton/>
           </el-icon>
-          <p>退出登录</p>
+          <p>退出</p>
         </div>
       </el-header>
       <el-container class="container">
         <el-aside width="220px" class="aside">
-          <el-col :span="50" class="asideStyle">
+          <el-col :span="50" class="aside-content">
             <el-menu
-                class="el-menu-vertical-demo"
+                class="vertical-menu"
                 default-active="2"
                 @open="handleOpen"
                 @close="handleClose"
             >
-              <!-- 班级学员管理索引菜单 -->
+              <!-- Class and Student Management -->
               <el-sub-menu index="1">
                 <template #title>
                   <el-icon>
@@ -35,7 +35,7 @@
                 <el-menu-item index="1-1" @click="transferTo('classManage')">班级管理</el-menu-item>
                 <el-menu-item index="1-2" @click="transferTo('studentManage')">学员管理</el-menu-item>
               </el-sub-menu>
-              <!-- 系统信息管理索引菜单 -->
+              <!-- System Information Management -->
               <el-sub-menu index="2">
                 <template #title>
                   <el-icon>
@@ -46,7 +46,7 @@
                 <el-menu-item index="2-1" @click="transferTo('departmentManage')">部门管理</el-menu-item>
                 <el-menu-item index="2-2" @click="transferTo('workersManage')">员工管理</el-menu-item>
               </el-sub-menu>
-              <!-- 数据统计管理索引菜单 -->
+              <!-- Data Statistics Management -->
               <el-sub-menu index="3">
                 <template #title>
                   <el-icon>
@@ -57,7 +57,7 @@
                 <el-menu-item index="3-1" @click="transferTo('empData')">员工信息统计</el-menu-item>
                 <el-menu-item index="3-2" @click="transferTo('studentData')">学员信息统计</el-menu-item>
               </el-sub-menu>
-              <!-- 课程教务管理索引菜单 -->
+              <!-- Course and Academic Affairs Management -->
               <el-sub-menu index="4">
                 <template #title>
                   <el-icon>
@@ -71,7 +71,7 @@
             </el-menu>
           </el-col>
         </el-aside>
-        <el-main class="main">
+        <el-main class="main-content">
           <router-view/>
         </el-main>
       </el-container>
@@ -80,7 +80,6 @@
 </template>
 
 <script setup>
-
 import {
   Document,
   Menu as IconMenu,
@@ -104,7 +103,7 @@ function transferTo(name) {
   router.push(name);
 }
 
-function loginOut() {
+function logout() {
   localStorage.removeItem('token');
   router.push("/");
 }
@@ -124,13 +123,13 @@ function loginOut() {
 
 .header {
   display: flex;
-  background-color: #fff;
   box-shadow: 2px 0px 5px 0px rgba(0, 0, 0, 0.2);
   justify-content: flex-end;
-  align-items: center
+  align-items: center;
+  background: linear-gradient(135deg, #4db7b7 0%, #0797ba 100%);
 }
 
-.log-out {
+.logout-button {
   display: flex;
   align-items: center;
   font-size: 1.5rem;
@@ -138,18 +137,25 @@ function loginOut() {
   margin-left: 15px;
 }
 
-.log-out p {
+.logout-button p {
   margin: 5px;
 }
 
-.log-out:hover {
+.logout-button:hover {
   color: #409EFF;
 }
 
 .aside {
   background-color: #fff;
-  /* border-right: 1px solid rgba(0, 0, 0, 0.5); */
   box-shadow: 2px 0px 5px 0px rgba(0, 0, 0, 0.2);
+}
+
+.vertical-menu {
+  font-size: 1.3rem;
+}
+
+.main-content {
+  flex: 1;
 }
 
 </style>

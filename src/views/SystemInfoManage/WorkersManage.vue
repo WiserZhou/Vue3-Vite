@@ -213,7 +213,7 @@ import ContentHeader from '../../components/ContentHeader.vue';
 import test from '../../assets/workersManage/u611.png';
 import { reactive, ref } from 'vue';
 import { ElMessage } from 'element-plus';
-import baseAxios from '@/api/baseAxios';
+import apiAxios from '@/api/ApiAxios.js';
 import moment from 'moment';
 import axios from 'axios';
 // 校验规则
@@ -313,7 +313,7 @@ let jobMap = {
 // 获取部门列表并创造对应变量
 let deptOptions = [];
 function getDeptList(){
-    baseAxios({
+    apiAxios({
         url: '/depts',
         method: 'get',
     }).then(res => {
@@ -352,7 +352,7 @@ function getEmpList(){
         end: formInline.entrydate[1],
     }
     console.log(params);
-    baseAxios({
+    apiAxios({
         url: '/emps',
         method: 'get',
         params
@@ -401,7 +401,7 @@ async function handleSave(formEl){
             } else if(dialogContent.value == "修改员工"){
                 method = 'put';
             }
-            baseAxios({
+            apiAxios({
                 url: "/emps",
                 method: method,
                 data: form.value,
@@ -465,7 +465,7 @@ const handleSelectionChange = (val) => {
 const handleEdit = (index, row) => {
     console.log(index, row)
     form.value = row;
-    baseAxios({
+    apiAxios({
         url: "/emps/" + row.id,
         method: 'get',
     }).then(res => {
@@ -497,7 +497,7 @@ function confirmDelete(type){
     }else{
         ids = temp_id.value;
     }
-    baseAxios({
+    apiAxios({
         url: "/emps/" + ids,
         method: "delete",
     }).then(res => {
@@ -545,7 +545,7 @@ function handleUpload() {
     }
     const formData = new FormData();
     formData.append('image', file);
-    baseAxios({
+    apiAxios({
         url: '/emps/upload',
         method: 'post',
         data: formData,

@@ -232,7 +232,7 @@
 
 <script setup>
 import ContentHeader from '../../components/ContentHeader.vue';
-import baseAxios from '@/api/baseAxios';
+import apiAxios from '@/api/ApiAxios.js';
 import {ElMessage} from 'element-plus';
 import {reactive, ref} from 'vue';
 import moment from 'moment';
@@ -349,7 +349,7 @@ const points = ref(0);
 const points_id = ref(null);
 
 function handlePoints() {
-  baseAxios({
+  apiAxios({
     url: '/student/points',
     method: 'put',
     data: {
@@ -384,7 +384,7 @@ let classOptions = ref([]);
 let classMap = {};
 
 function getClassList() {
-  baseAxios({
+  apiAxios({
     url: '/class/all',
     method: 'get',
   }).then(res => {
@@ -425,7 +425,7 @@ function getStudentList() {
     classId: formInline.classId
   }
   console.log(params);
-  baseAxios({
+  apiAxios({
     url: '/student',
     method: 'get',
     params
@@ -485,7 +485,7 @@ async function handleSave(formEl) {
         method = 'put';
       }
       console.log(form.value);
-      baseAxios({
+      apiAxios({
         url: "/student",
         method: method,
         data: form.value,
@@ -543,7 +543,7 @@ const handleSelectionChange = (val) => {
 }
 const handleEdit = (index, row) => {
   console.log(index, row)
-  baseAxios({
+  apiAxios({
     url: "/student/" + row.id,
     method: 'get',
   }).then(res => {
@@ -574,7 +574,7 @@ function confirmDelete(type) {
   } else {
     ids = temp_id.value;
   }
-  baseAxios({
+  apiAxios({
     url: "/student/" + ids,
     method: "delete",
   }).then(res => {

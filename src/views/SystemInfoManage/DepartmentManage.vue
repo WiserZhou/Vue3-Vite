@@ -63,7 +63,7 @@
 import ContentHeader from '../../components/ContentHeader.vue';
 import { ElMessage } from 'element-plus'
 import { reactive, ref } from 'vue'
-import baseAxios from '@/api/baseAxios';
+import apiAxios from '@/api/ApiAxios.js';
 import moment from 'moment';
 // 用于记录当前打开对话框的id
 const temp_id = ref(0);
@@ -76,7 +76,7 @@ const dateFormatter = (row) => {
 // 这里是获取表格数据部分
 const tableData = ref([]);
 function getDeptList(){
-    baseAxios({
+    apiAxios({
         url: '/depts',
         method: 'get',
     }).then(res => {
@@ -119,7 +119,7 @@ function handleSave(){
                 name: name.value
             }
         }
-        baseAxios({
+        apiAxios({
             url: '/depts',
             method: method,
             data: data,
@@ -162,7 +162,7 @@ const handleDelete = (index, row) => {
 }
 
 function confirmDelete(){
-    baseAxios({
+    apiAxios({
         url: '/depts/' + temp_id.value,
         method: 'delete',
     }).then(res => {
