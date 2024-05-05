@@ -1,7 +1,7 @@
 <template>
-    <div class="wrapper">
-        <span>{{ props.content }}</span>
-    </div>
+  <div class="main">
+    <span>{{ props.content }}</span>
+  </div>
 </template>
 
 <script setup>
@@ -9,16 +9,16 @@ const props = defineProps(["content"]);
 </script>
 
 <style scoped>
-.wrapper {
-    display: flex;
-    align-items: center;
-    height: 30px;
-    border-left: 6px solid rgba(2, 167, 240, 1);
+.main {
+  display: flex;
+  align-items: center;
+  height: 1cm;
+  border-left: 7px solid #02A7F0FF;
 }
 
-.wrapper span {
-    font: 400 18px 'Microsoft YaHei';
-    margin: 0 10px;
-    color: #02A7F0;
+.main span {
+  font: 400 18px 'Leto';
+  margin: 0 10px;
+  color: #02A7F0;
 }
 </style>

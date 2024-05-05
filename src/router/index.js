@@ -5,8 +5,8 @@ import ClassManage from '@/views/ClassStudentManage/ClassManage.vue';
 import StudentManage from '@/views/ClassStudentManage/StudentManage.vue';
 import DepartmentManage from '@/views/SysInfoManage/DepartmentManage.vue';
 import EmployeeManage from '@/views/SysInfoManage/EmployeeManage.vue';
-import EmpInfoManage from '@/views/DataStatisticsManage/EmpInfo.vue';
-import StuInfoManage from '@/views/DataStatisticsManage/StuInfo.vue';
+import EmpInfoManage from '@/views/DataStatisticsManage/EmpInfoManage.vue';
+import StuInfoManage from '@/views/DataStatisticsManage/StuInfoManage.vue';
 import CurriculumManage from '@/views/CurriculumAcademicManage/CurriculumManage.vue';
 import CurriculumArrange from '@/views/CurriculumAcademicManage/CurriculumArrange.vue';
 

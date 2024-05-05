@@ -11,7 +11,7 @@
         <el-icon>
           <SwitchButton/>
         </el-icon>
-        <p>退出登录</p>
+        <span>退出登录</span>
       </div>
     </el-header>
     <el-container class="container">
@@ -121,9 +121,6 @@ function logout() {
   margin-left: 15px;
 }
 
-.button p {
-  margin: 5px;
-}
 
 .button:hover {
   color: #0b6acc;
@@ -131,6 +128,7 @@ function logout() {
 
 .aside {
   box-shadow: 2px 0 5px 0 rgba(0, 0, 0, 0.2);
+  background-color: rgba(217, 232, 229, 0.2);
 }
 
 .vertical-menu {
@@ -140,5 +138,10 @@ function logout() {
 .main-content {
   flex: 1;
 }
+
+.button p {
+  margin: 30px;
+}
+
 
 </style>
