@@ -86,7 +86,7 @@ h3 {
   transform: translateY(-2px);
 }
 
-.el-input.is-error input {
+.el-input.error input {
   border-color: #ff4d4f !important;
 }
 </style>

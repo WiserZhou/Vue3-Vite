@@ -1,14 +1,14 @@
 import {createRouter, createWebHistory} from 'vue-router';
 import SignUpView from '@/views/SignUpView.vue';
 import HomePage from '@/views/HomePage.vue';
-import ClassManage from '@/views/ClassMemberManage/ClassManage.vue';
-import StudentManage from '@/views/ClassMemberManage/StudentManage.vue';
-import DepartmentManage from '@/views/SystemInfoManage/DepartmentManage.vue';
-import WorkersManage from '@/views/SystemInfoManage/WorkersManage.vue';
-import EmpData from '@/views/DataStatistics/EmpData.vue';
-import StudentData from '@/views/DataStatistics/StudentData.vue';
-import CourseManage from '@/views/CourseEducation/CourseManage.vue';
-import CourseArrange from '@/views/CourseEducation/CourseArrange.vue';
+import ClassManage from '@/views/ClassStudentManage/ClassManage.vue';
+import StudentManage from '@/views/ClassStudentManage/StudentManage.vue';
+import DepartmentManage from '@/views/SysInfoManage/DepartmentManage.vue';
+import EmployeeManage from '@/views/SysInfoManage/EmployeeManage.vue';
+import EmpInfoManage from '@/views/DataStatisticsManage/EmpInfo.vue';
+import StuInfoManage from '@/views/DataStatisticsManage/StuInfo.vue';
+import CurriculumManage from '@/views/CurriculumAcademicManage/CurriculumManage.vue';
+import CurriculumArrange from '@/views/CurriculumAcademicManage/CurriculumArrange.vue';
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -25,43 +25,35 @@ const router = createRouter({
             children: [
                 {
                     path: '/classManage',
-                    name: 'classManage',
                     component: ClassManage,
                 },
                 {
                     path: '/studentManage',
-                    name: 'studentManage',
                     component: StudentManage,
                 },
                 {
                     path: '/departmentManage',
-                    name: 'departmentManage',
                     component: DepartmentManage,
                 },
                 {
-                    path: '/workersManage',
-                    name: 'workersManage',
-                    component: WorkersManage,
+                    path: '/employeeManage',
+                    component: EmployeeManage,
                 },
                 {
-                    path: '/empData',
-                    name: 'empData',
-                    component: EmpData,
+                    path: '/empInfoManage',
+                    component: EmpInfoManage,
                 },
                 {
-                    path: '/studentData',
-                    name: 'studentData',
-                    component: StudentData,
+                    path: '/stuInfoManage',
+                    component: StuInfoManage,
                 },
                 {
-                    path: '/courseManage',
-                    name: 'courseManage',
-                    component: CourseManage,
+                    path: '/curriculumManage',
+                    component: CurriculumManage,
                 },
                 {
-                    path: '/courseArrange',
-                    name: 'courseArrange',
-                    component: CourseArrange,
+                    path: '/curriculumArrange',
+                    component: CurriculumArrange,
                 }
             ]
         },
