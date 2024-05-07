@@ -107,7 +107,6 @@ function logout() {
 
 .header {
   display: flex;
-  box-shadow: 3px 0 5px 0 rgba(0, 0, 0, 0.2);
   justify-content: flex-end;
   align-items: center;
   background: linear-gradient(135deg, #4db7b7 0%, #0797ba 100%);
@@ -127,7 +126,6 @@ function logout() {
 }
 
 .aside {
-  box-shadow: 2px 0 5px 0 rgba(0, 0, 0, 0.2);
   background-color: rgba(217, 232, 229, 0.2);
 }
 

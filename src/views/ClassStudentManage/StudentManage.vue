@@ -51,11 +51,11 @@
     <div class="tableInfo">
       <el-table :data="tableData" style="width: 100%;height: calc(100vh - 300px);" :fit="true"
                 @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="55" align="center"/>
+        <el-table-column type="selection" width="25" align="center"/>
         <el-table-column property="name" label="姓名" align="center"/>
         <el-table-column property="stuId" label="学号" align="center"/>
-        <el-table-column property="class" label="班级" align="center"/>
-        <el-table-column property="genderName" label="性别" align="center"/>
+        <el-table-column property="class" width="150" label="班级" align="center"/>
+        <el-table-column property="genderName" width="80" label="性别" align="center"/>
         <el-table-column property="telephone" label="手机号" align="center"/>
         <el-table-column property="education" label="最高学历" align="center"/>
         <el-table-column property="disciplineNum" label="违纪次数" align="center"/>
@@ -65,11 +65,7 @@
           <template #default="scope">
             <el-button size="small" type="primary" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
             <el-button size="small" type="warning" @click="handleIndiscipline(scope.$index, scope.row)">违纪</el-button>
-            <el-button
-                size="small"
-                type="danger"
-                @click="handleDelete(scope.$index, scope.row)">删除
-            </el-button>
+            <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -94,7 +90,7 @@
     </div>
   </div>
   <el-dialog
-      v-model="indisciplineDialogVisible"
+      v-model="disciplineVisible"
       width="500">
     <ContentHeader content="学员违纪处理"></ContentHeader>
     <div>
@@ -109,13 +105,13 @@
         <el-button type="primary" @click="handlePoints">
           确定
         </el-button>
-        <el-button @click="indisciplineDialogVisible = false">取消</el-button>
+        <el-button @click="disciplineVisible = false">取消</el-button>
       </div>
     </template>
   </el-dialog>
 
   <el-dialog
-      v-model="dialogBatchVisible"
+      v-model="dialogDelVisible"
       width="500">
     <ContentHeader content="批量删除学员"></ContentHeader>
     <div class="info-message">您确定要批量删除这些学员的信息吗 ?</div>
@@ -124,16 +120,14 @@
         <el-button type="primary" @click="confirmDelete(1)">
           确定
         </el-button>
-        <el-button @click="dialogBatchVisible = false">取消</el-button>
+        <el-button @click="dialogDelVisible = false">取消</el-button>
       </div>
     </template>
   </el-dialog>
 
-  <el-dialog
-      v-model="dialogVisible"
-      width="500">
+  <el-dialog v-model="dialogVisible" width="500">
     <ContentHeader content="删除学员"></ContentHeader>
-    <div class="info-message">您确定要删除该学员的信息吗 ?</div>
+    <div class="info-message">您确定要删除该学员的信息吗？</div>
     <template #footer>
       <div class="dialog-footer">
         <el-button type="primary" @click="confirmDelete(0)">
@@ -324,7 +318,7 @@ let educationOptions = [
   },
 ];
 
-const indisciplineDialogVisible = ref(false);
+const disciplineVisible = ref(false);
 const points = ref(0);
 const points_id = ref(null);
 
@@ -342,7 +336,7 @@ function handlePoints() {
         message: "处理成功",
         type: "success"
       })
-      indisciplineDialogVisible.value = false;
+      disciplineVisible.value = false;
       getStudentList();
     }
   })
@@ -415,7 +409,6 @@ function getStudentList() {
     tableData.value.forEach(x => {
       x.class = classMap[x.classId];
       x.genderName = genderMap[x.gender];
-
     });
     total.value = res.data.data.total;
   }).catch(err => {
@@ -425,7 +418,7 @@ function getStudentList() {
 
 getStudentList();
 
-const dialogBatchVisible = ref(false)
+const dialogDelVisible = ref(false)
 const dialogVisible = ref(false)
 const dialogContent = ref("添加学员");
 const form = ref({});
@@ -467,15 +460,12 @@ async function handleSave(formEl) {
       console.log('error submit!', fields)
     }
   })
-
 }
-
 
 const onSubmit = () => {
   console.log('submit!')
   getStudentList();
 }
-
 
 function handleAdd() {
   form.value = {
@@ -491,7 +481,7 @@ function handleAdd() {
 }
 
 function handleBatchDel() {
-  dialogBatchVisible.value = true;
+  dialogDelVisible.value = true;
 }
 
 const multipleSelection = ref([])
@@ -542,7 +532,7 @@ function confirmDelete(type) {
       })
       getStudentList();
       dialogVisible.value = false;
-      dialogBatchVisible.value = false;
+      dialogDelVisible.value = false;
     }
   })
 }
@@ -551,7 +541,7 @@ const handleIndiscipline = (index, row) => {
   console.log(index, row)
   points.value = 0;
   points_id.value = row.id;
-  indisciplineDialogVisible.value = true;
+  disciplineVisible.value = true;
 }
 
 const handleSizeChange = (val) => {
