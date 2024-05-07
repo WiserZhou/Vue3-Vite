@@ -23,7 +23,7 @@
     </el-form>
   </div>
 
-  <el-button type="primary" @click="handleAdd">新增班级</el-button>
+  <el-button type="primary" @click="handleAdd" style="margin-bottom: 10px">新增班级</el-button>
 
   <div class="tableInfo">
     <el-table :data="tableData" :fit="true">
@@ -394,6 +394,7 @@ const handleCurrentChange = (val) => {
 
 .queryForm {
   height: 60px;
+  margin-bottom: 10px;
 }
 
 .demo-form-inline {

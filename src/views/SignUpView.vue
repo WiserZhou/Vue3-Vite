@@ -135,7 +135,7 @@ function handleLogin() {
       }
     }).then(res => {
       isLoggingIn.value = false;
-      if (res.data.code) {
+      if (res.data.code===200) {
         localStorage.setItem("token", res.data.data);
         ElMessage({
           message: '登录成功！',

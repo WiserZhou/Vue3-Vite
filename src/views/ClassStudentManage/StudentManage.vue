@@ -1,15 +1,13 @@
 <template>
   <div class="mainBox">
-
     <ContentHeader content="学员管理"></ContentHeader>
-
     <div class="query">
       <el-form :inline="true" :model="formQuery" class="demo-form-inline">
         <el-form-item label="学员姓名">
-          <el-input v-model="formQuery.name" placeholder="请输入学员姓名" style="width: 150px;" clearable/>
+          <el-input v-model="formQuery.name" placeholder="请输入学员姓名" style="width: 120px;" clearable/>
         </el-form-item>
         <el-form-item label="学号">
-          <el-input v-model="formQuery.stuId" placeholder="请输入学号" style="width: 150px;" clearable/>
+          <el-input v-model="formQuery.stuId" placeholder="请输入学号" style="width: 120px;" clearable/>
         </el-form-item>
         <el-form-item label="最高学历">
           <el-select
@@ -17,7 +15,7 @@
               filterable
               clearable
               placeholder="请选择"
-              style="width: 280px;">
+              style="width: 100px;">
             <el-option
                 v-for="item in educationOptions"
                 :key="item.value"
@@ -31,7 +29,7 @@
               filterable
               clearable
               placeholder="请选择"
-              style="width: 280px;">
+              style="width: 100px;">
             <el-option
                 v-for="item in classOptions"
                 :key="item.value"
@@ -45,8 +43,10 @@
       </el-form>
     </div>
 
-    <el-button type="primary" @click="handleAdd" style="margin-top: 10px">+&nbsp;添加学员</el-button>
-    <el-button type="primary" @click="handleBatchDel" style="margin-top: 10px">-&nbsp;批量删除</el-button>
+    <el-button type="primary" @click="handleAdd" style="margin-top: 10px;margin-bottom: 10px">+&nbsp;添加学员
+    </el-button>
+    <el-button type="primary" @click="handleBatchDelete" style="margin-top: 10px;margin-bottom: 10px">-&nbsp;批量删除
+    </el-button>
 
     <div class="tableInfo">
       <el-table :data="tableData" style="width: 100%;height: calc(100vh - 300px);" :fit="true"
@@ -59,7 +59,7 @@
         <el-table-column property="telephone" label="手机号" align="center"/>
         <el-table-column property="education" label="最高学历" align="center"/>
         <el-table-column property="disciplineNum" label="违纪次数" align="center"/>
-        <el-table-column property="indisciplinePoints" label="违纪扣分" align="center"/>
+        <el-table-column property="disciplineScore" label="违纪扣分" align="center"/>
         <el-table-column property="updateTime" label="最后操作时间" :formatter="dateFormatter" align="center"/>
         <el-table-column label="操作" align="center" width="250">
           <template #default="scope">
@@ -480,7 +480,7 @@ function handleAdd() {
   dialogFormVisible.value = true;
 }
 
-function handleBatchDel() {
+function handleBatchDelete() {
   dialogDelVisible.value = true;
 }
 

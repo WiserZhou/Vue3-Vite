@@ -32,7 +32,7 @@
       </div>
     </template>
   </el-dialog>
-  <div class="wholeWrapper">
+  <div class="mainBox">
     <ContentHeader content="部门管理"></ContentHeader>
     <!-- 新增按钮 -->
     <el-button type="primary" @click="handleAdd" style="margin-top: 20px;">+ 新增部门</el-button>
@@ -185,7 +185,7 @@ function confirmDelete() {
 </script>
 
 <style scoped>
-.wholeWrapper {
+.mainBox {
   position: relative;
   width: 100%;
   height: 100%;

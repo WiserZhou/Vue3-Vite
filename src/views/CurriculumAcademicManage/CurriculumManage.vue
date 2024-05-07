@@ -1,9 +1,61 @@
 <template>
-  <!-- 批量删除确认框 -->
-  <el-dialog
-      v-model="dialogBatchVisible"
-      width="500"
-  >
+  <div class="mainBox">
+    <ContentHeader content="课程管理"></ContentHeader>
+    <div class="query">
+      <el-form :inline="true" :model="queryForm" class="demo-form-inline">
+        <el-form-item label="课程名称">
+          <el-input v-model="queryForm.name" placeholder="请输入课程名称" style="width: 130px;" clearable/>
+        </el-form-item>
+        <el-form-item label="上课地点">
+          <el-input v-model="queryForm.classRoom" placeholder="请输入上课地点" @input="handleChange1(form.classRoom)"
+                    style="width: 130px;"/>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="onSubmit">查询</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
+    <el-button type="primary" @click="handleAdd">+&nbsp;添加课程</el-button>
+    <el-button type="primary" @click="handleBatchDel">-&nbsp;批量删除</el-button>
+    <div class="info-table">
+      <el-table :data="tableData" style="width: 100%;height: calc(100vh - 300px);" :fit="true"
+                @selection-change="handleSelectionChange">
+        <el-table-column type="selection" width="55" align="center"/>
+        <el-table-column property="courseId" label="课程代码" align="center"/>
+        <el-table-column property="name" label="课程名称" align="center"/>
+        <el-table-column property="classRoom" label="上课地点" align="center"/>
+        <el-table-column property="attribute" label="课程性质" align="center"/>
+        <el-table-column property="totalTime" label="总学时" align="center"/>
+        <el-table-column property="score" label="学分" align="center"/>
+        <el-table-column label="操作" align="center" width="250">
+          <template #default="scope">
+            <el-button size="small" type="primary" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+            <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+
+    <div class="foot-pagination">
+      <el-pagination
+          v-model:current-page="currentPage"
+          v-model:page-size="pageSize"
+          :page-sizes="[10, 20, 50, 100]"
+          layout="slot, sizes, prev, pager, next, jumper"
+          :total="total"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange">
+        <template #default>
+          <span class="el-pagination__total">共{{ total }}条数据</span>
+        </template>
+        <template #jumper>
+          <span>前往{{ jumper }}页</span>
+        </template>
+      </el-pagination>
+    </div>
+  </div>
+
+  <el-dialog v-model="dialogBatchVisible" width="500">
     <ContentHeader content="批量删除课程"></ContentHeader>
     <div class="info-message">您确定要批量删除这些课程的信息吗 ?</div>
     <template #footer>
@@ -15,11 +67,10 @@
       </div>
     </template>
   </el-dialog>
-  <!-- 删除确认框 -->
+
   <el-dialog
       v-model="dialogVisible"
-      width="500"
-  >
+      width="500">
     <ContentHeader content="删除课程"></ContentHeader>
     <div class="info-message">您确定要删除该课程的信息吗 ?</div>
     <template #footer>
@@ -28,11 +79,10 @@
           确定
         </el-button>
         <el-button @click="dialogVisible = false">取消</el-button>
-
       </div>
     </template>
   </el-dialog>
-  <!-- 表格弹出框 -->
+
   <el-dialog v-model="dialogFormVisible" width="500">
     <ContentHeader :content="dialogContent"></ContentHeader>
     <el-form :model="form" style="margin-top: 15px;" ref="ruleFormRef" :rules="rules">
@@ -42,27 +92,25 @@
       <el-form-item label="课程名称" :label-width="formLabelWidth" prop="name">
         <el-input v-model="form.name" placeholder="请输入课程名称" style="width: 280px;"/>
       </el-form-item>
-      <el-form-item label="课程属性" :label-width="formLabelWidth" prop="quality">
+      <el-form-item label="课程属性" :label-width="formLabelWidth" prop="attribute">
         <el-select
-            v-model="form.quality"
+            v-model="form.attribute"
             filterable
             clearable
             placeholder="请选择"
-            style="width: 280px;"
-        >
+            style="width: 280px;">
           <el-option
-              v-for="item in qualityOptions"
+              v-for="item in attributeOptions"
               :key="item.value"
               :label="item.label"
-              :value="item.value"
-          />
+              :value="item.value"/>
         </el-select>
       </el-form-item>
       <el-form-item label="上课地点" :label-width="formLabelWidth" prop="classRoom">
         <el-input v-model="form.classRoom" placeholder="请输入上课地点" style="width: 280px;"/>
       </el-form-item>
-      <el-form-item label="学分" :label-width="formLabelWidth" prop="points">
-        <el-input v-model="form.points" placeholder="请输入课程学分" @input="handleChange2(form.points)"
+      <el-form-item label="学分" :label-width="formLabelWidth" prop="score">
+        <el-input v-model="form.score" placeholder="请输入课程学分" @input="handleChange2(form.score)"
                   style="width: 280px;"/>
       </el-form-item>
       <el-form-item label="总学时" :label-width="formLabelWidth" prop="totalTime">
@@ -79,89 +127,7 @@
       </div>
     </template>
   </el-dialog>
-  <div class="wholeWrapper">
-    <ContentHeader content="课程管理"></ContentHeader>
 
-    <div class="query">
-      <!-- 查询表单 -->
-      <el-form :inline="true" :model="formInline" class="demo-form-inline">
-        <el-form-item label="课程名称">
-          <el-input v-model="formInline.name" placeholder="请输入课程名称" style="width: 150px;" clearable/>
-        </el-form-item>
-        <el-form-item label="课程属性">
-          <el-select
-              v-model="formInline.quality"
-              filterable
-              clearable
-              placeholder="请选择"
-              style="width: 280px;"
-          >
-            <el-option
-                v-for="item in qualityOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="上课地点">
-          <el-input v-model="formInline.classRoom" placeholder="请输入上课地点" @input="handleChange1(form.classRoom)"
-                    style="width: 280px;"/>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="onSubmit">查询</el-button>
-        </el-form-item>
-      </el-form>
-    </div>
-    <!-- 新增按钮 -->
-    <el-button type="primary" @click="handleAdd">+ 添加课程</el-button>
-    <el-button type="primary" @click="handleBatchDel">- 批量删除</el-button>
-
-    <div class="info-table">
-      <!-- 表格 -->
-      <el-table :data="tableData" style="width: 100%;height: calc(100vh - 300px);" :fit="true"
-                @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="55" align="center"/>
-        <el-table-column property="courseId" label="课程代码" align="center"/>
-        <el-table-column property="name" label="课程名称" align="center"/>
-        <el-table-column property="classRoom" label="上课地点" align="center"/>
-        <el-table-column property="qualityName" label="课程属性" align="center"/>
-
-        <el-table-column property="totalTime" label="总学时" align="center"/>
-        <el-table-column property="points" label="学分" align="center"/>
-        <el-table-column label="操作" align="center" width="250">
-          <template #default="scope">
-            <el-button size="small" type="primary" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-            <el-button
-                size="small"
-                type="danger"
-                @click="handleDelete(scope.$index, scope.row)">删除
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
-
-    <!-- 翻页器 -->
-    <div class="foot-pagination">
-      <el-pagination
-          v-model:current-page="currentPage"
-          v-model:page-size="pageSize"
-          :page-sizes="[10, 20, 50, 100]"
-          layout="slot, sizes, prev, pager, next, jumper"
-          :total="total"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-      >
-        <template #default>
-          <span class="el-pagination__total">共{{ total }}条数据</span>
-        </template>
-        <template #jumper>
-          <span>前往{{ jumper }}页</span>
-        </template>
-      </el-pagination>
-    </div>
-  </div>
 </template>
 
 <script setup>
@@ -187,13 +153,13 @@ const handleChange2 = (value) => {
   if (!/^\d+(\.\d+)?$/.test(value) && value != '') {
     ElMessage.error('请输入小数或整数！');
     // 移除非数字字符
-    form.value.points = value.replace(/[^\d.]/g, '');
+    form.value.score = value.replace(/[^\d.]/g, '');
   } else {
     const floatValue = parseFloat(value);
     // 如果大于 10，则将值置为 10
     if (floatValue > 10) {
       ElMessage.error('学分不能大于10！');
-      form.value.points = '10';
+      form.value.score = '10';
     }
   }
 }
@@ -230,13 +196,13 @@ const rules = reactive({
     {min: 2, max: 20, message: '课程名称应为2-20位', trigger: 'blur'},
     {validator: validateName, trigger: 'blur'}
   ],
-  quality: [
+  attribute: [
     {required: true, message: '请选择课程性质', trigger: 'change'},
   ],
   classRoom: [
     {required: true, message: '请选择上课地点', trigger: 'change'},
   ],
-  points: [
+  score: [
     {required: true, message: '请输入学分', trigger: 'blur'},
   ],
   totalTime: [
@@ -249,7 +215,7 @@ const currentPage = ref(1);
 const pageSize = ref(10);
 const total = ref(1);
 // 选项变量们
-let qualityOptions = [
+let attributeOptions = [
   {
     label: "必修",
     value: 1,
@@ -259,21 +225,14 @@ let qualityOptions = [
     value: 2,
   }
 ];
-let qualityMap = {
+let attributeMap = {
   1: "必修",
   2: "选修"
 };
-
-// 课程违纪处理部分
-const indisciplineDialogVisible = ref(false);
-const points = ref(0);
-const points_id = ref(null);
-
-
 // 这里是查询表单部分
-const formInline = reactive({
+const queryForm = reactive({
   name: "",
-  quality: null,
+  attribute: null,
   classRoom: null,
 })
 // 这里是获取课程表格数据部分
@@ -283,9 +242,9 @@ function getCourseList() {
   let params = {
     page: currentPage.value,
     pageSize: pageSize.value,
-    name: formInline.name,
-    quality: formInline.quality,
-    classRoom: formInline.classRoom
+    name: queryForm.name,
+    attribute: queryForm.attribute,
+    classRoom: queryForm.classRoom
   }
   console.log(params);
   apiAxios({
@@ -296,7 +255,7 @@ function getCourseList() {
     console.log(res.data);
     tableData.value = res.data.data.rows;
     tableData.value.forEach(x => {
-      x.qualityName = qualityMap[x.quality];
+      x.attribute = attributeMap[x.attribute];
     });
     total.value = res.data.data.total;
   }).catch(err => {
@@ -310,7 +269,6 @@ getCourseList();
 const dialogBatchVisible = ref(false)
 // 确认删除框部分
 const dialogVisible = ref(false)
-
 
 const dialogContent = ref("添加课程");
 
@@ -369,9 +327,9 @@ function handleAdd() {
   form.value = {
     courseId: "",
     name: "",
-    quality: null,
+    attribute: null,
     classRoom: null,
-    points: null,
+    score: null,
     totalTime: null,
   }
   dialogContent.value = "添加课程";
@@ -438,12 +396,6 @@ function confirmDelete(type) {
   })
 }
 
-const handleIndiscipline = (index, row) => {
-  console.log(index, row)
-  points.value = 0;
-  points_id.value = row.id;
-  indisciplineDialogVisible.value = true;
-}
 // 翻页器
 const handleSizeChange = (val) => {
   console.log(`${val} items per page`)
@@ -457,7 +409,7 @@ const handleCurrentChange = (val) => {
 </script>
 
 <style scoped>
-.wholeWrapper {
+.mainBox {
   position: relative;
   width: 100%;
   height: 100%;

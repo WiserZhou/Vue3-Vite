@@ -115,18 +115,18 @@
       </div>
     </template>
   </el-dialog>
-  <div class="wholeWrapper">
+  <div class="mainBox">
     <ContentHeader content="员工管理"></ContentHeader>
 
     <div class="query">
       <!-- 查询表单 -->
-      <el-form :inline="true" :model="formInline" class="demo-form-inline">
+      <el-form :inline="true" :model="queryForm" class="demo-form-inline">
         <el-form-item label="姓名">
-          <el-input v-model="formInline.name" placeholder="请输入员工姓名" style="width: 150px;" clearable/>
+          <el-input v-model="queryForm.name" placeholder="请输入员工姓名" style="width: 150px;" clearable/>
         </el-form-item>
         <el-form-item label="性别">
           <el-select
-              v-model="formInline.gender"
+              v-model="queryForm.gender"
               filterable
               clearable
               placeholder="请选择"
@@ -142,7 +142,7 @@
         </el-form-item>
         <el-form-item label="入职时间 从">
           <el-date-picker
-              v-model="formInline.entrydate"
+              v-model="queryForm.entrydate"
               type="daterange"
               start-placeholder="开始时间"
               end-placeholder="结束时间"
@@ -198,8 +198,7 @@
           layout="slot, sizes, prev, pager, next, jumper"
           :total="total"
           @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-      >
+          @current-change="handleCurrentChange">
         <template #default>
           <span class="el-pagination__total">共{{ total }}条数据</span>
         </template>
@@ -218,9 +217,8 @@ import {ElMessage} from 'element-plus';
 import apiAxios from '@/api/ApiAxios.js';
 import moment from 'moment';
 
-// 校验规则
+
 function validateUsername(rule, value) {
-  // 使用正则表达式验证用户名是否只包含数字和字母
   const pattern = /^[A-Za-z0-9]+$/;
   if (!pattern.test(value)) {
     return Promise.reject('用户名只能包含数字和字母');
@@ -230,7 +228,6 @@ function validateUsername(rule, value) {
 }
 
 function validateName(rule, value) {
-  // 使用正则表达式验证姓名是否只包含汉字
   const pattern = /^[\u4e00-\u9fa5]+$/;
   if (!pattern.test(value)) {
     return Promise.reject('姓名只能包含汉字');
@@ -258,7 +255,7 @@ const rules = reactive({
 // 操作dom
 const fileInput = ref();
 const username_disabled = ref(true);
-// const baseUrl = "http://localhost:8080/upload/";
+
 // 翻页器变量
 const currentPage = ref(1);
 const pageSize = ref(10);
@@ -336,7 +333,7 @@ function getDeptList() {
 
 getDeptList();
 // 这里是查询表单部分
-const formInline = reactive({
+const queryForm = reactive({
   name: null,
   gender: null,
   entrydate: [null, null],
@@ -346,16 +343,16 @@ const formInline = reactive({
 const tableData = ref([]);
 
 function getEmpList() {
-  if (formInline.entrydate == null) {
-    formInline.entrydate = [null, null];
+  if (queryForm.entrydate == null) {
+    queryForm.entrydate = [null, null];
   }
   let params = {
     page: currentPage.value,
     pageSize: pageSize.value,
-    name: formInline.name,
-    gender: formInline.gender,
-    begin: formInline.entrydate[0],
-    end: formInline.entrydate[1],
+    name: queryForm.name,
+    gender: queryForm.gender,
+    begin: queryForm.entrydate[0],
+    end: queryForm.entrydate[1],
   }
   console.log(params);
   apiAxios({
@@ -430,7 +427,7 @@ async function handleSave(formEl) {
 }
 
 const onSubmit = () => {
-  console.log(formInline.value);
+  console.log(queryForm.value);
   getEmpList();
 }
 
@@ -560,7 +557,8 @@ function handleUpload() {
       'Content-Type': 'multipart/form-data'
     }
   }).then(res => {
-    console.log(res.data);
+    console.log("datadata")
+    console.log(res.data.data);
     form.value.image = res.data.data;
   }).catch(err => {
     console.log(err.message);
@@ -569,7 +567,7 @@ function handleUpload() {
 </script>
 
 <style scoped>
-.wholeWrapper {
+.mainBox {
   position: relative;
   width: 100%;
   height: 100%;
