@@ -1,11 +1,15 @@
 <template>
+  <!-- 班级管理页面头部 -->
   <ContentHeader content="班级管理"></ContentHeader>
 
+  <!-- 查询表单区域 -->
   <div class="queryForm">
     <el-form :inline="true" :model="formQuery" class="demo-form-inline">
+      <!-- 班级名称输入框 -->
       <el-form-item label="班级名称">
         <el-input v-model="formQuery.name" placeholder="请输入班级名称" style="width: 180px;"/>
       </el-form-item>
+      <!-- 课程时间选择器 -->
       <el-form-item label="课程时间">
         <el-date-picker
             v-model="formQuery.period"
@@ -15,56 +19,60 @@
             :default-value="[new Date(), new Date()]"
             value-format="YYYY-MM-DD"/>
       </el-form-item>
-
+      <!-- 查询按钮 -->
       <el-form-item>
         <el-button type="primary" @click="onSubmit">查询</el-button>
       </el-form-item>
-
     </el-form>
   </div>
 
+  <!-- 新增班级按钮 -->
   <el-button type="primary" @click="handleAdd" style="margin-bottom: 10px">新增班级</el-button>
 
+  <!-- 班级信息表格区域 -->
   <div class="tableInfo">
     <el-table :data="tableData" :fit="true">
-
+      <!-- 序号列，动态计算序号 -->
       <el-table-column type="index" label="序号" width="100" align="center">
         <template #default="scope">
           {{ (currentPage - 1) * pageSize + scope.$index + 1 }}
         </template>
       </el-table-column>
-
+      <!-- 班级名称列 -->
       <el-table-column property="name" label="班级名称" align="center"/>
+      <!-- 班级教室列 -->
       <el-table-column property="classroom" label="班级教室" align="center"/>
+      <!-- 开课时间列 -->
       <el-table-column property="startTime" label="开课时间" align="center"/>
+      <!-- 结课时间列 -->
       <el-table-column property="endTime" label="结课时间" align="center"/>
+      <!-- 班主任列 -->
       <el-table-column property="teacher" label="班主任" align="center"/>
+      <!-- 操作列，包含编辑和删除按钮 -->
       <el-table-column label="操作" align="center">
         <template #default="scope">
           <el-button size="small" type="primary" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-          <el-button
-              size="small"
-              type="danger"
-              @click="handleDelete(scope.$index, scope.row)">
-            删除
-          </el-button>
+          <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
         </template>
       </el-table-column>
-
     </el-table>
   </div>
 
+  <!-- 添加/编辑班级对话框 -->
   <el-dialog v-model="isFormDialogVisible" width="500">
-
+    <!-- 对话框标题 -->
     <ContentHeader :content="dialogContent"></ContentHeader>
-
+    <!-- 表单内容，用于添加或编辑班级信息 -->
     <el-form :model="form" style="margin-top: 15px;" ref="ruleFormRef" :rules="rules">
+      <!-- 班级名称输入 -->
       <el-form-item label="班级名称" :label-width="formLabelWidth" prop="name">
         <el-input v-model="form.name" placeholder="请输入班级名称，如：2024第01期10班" style="width: 280px;"/>
       </el-form-item>
+      <!-- 班级教室输入 -->
       <el-form-item label="班级教室" :label-width="formLabelWidth" prop="classroom">
         <el-input v-model="form.classroom" placeholder="请填写班级教室" style="width: 280px;"/>
       </el-form-item>
+      <!-- 开课时间选择 -->
       <el-form-item label="开课时间" :label-width="formLabelWidth" prop="startTime">
         <el-date-picker
             v-model="form.startTime"
@@ -74,6 +82,7 @@
             style="width: 280px;"
             value-format="YYYY-MM-DD"/>
       </el-form-item>
+      <!-- 结课时间选择 -->
       <el-form-item label="结课时间" :label-width="formLabelWidth" prop="endTime">
         <el-date-picker
             v-model="form.endTime"
@@ -83,6 +92,7 @@
             style="width: 280px;"
             value-format="YYYY-MM-DD"/>
       </el-form-item>
+      <!-- 班主任下拉选择 -->
       <el-form-item label="班主任" :label-width="formLabelWidth" prop="teacherId">
         <el-select
             v-model="form.teacherId"
@@ -98,34 +108,31 @@
         </el-select>
       </el-form-item>
     </el-form>
-
+    <!-- 对话框底部操作按钮 -->
     <template #footer>
       <div class="dialog-footer">
-        <el-button type="primary" @click="handleSave(ruleFormRef)">
-          保存
-        </el-button>
+        <el-button type="primary" @click="handleSave(ruleFormRef)">保存</el-button>
         <el-button @click="isFormDialogVisible = false">取消</el-button>
       </div>
     </template>
-
   </el-dialog>
 
+  <!-- 删除确认对话框 -->
   <el-dialog v-model="dialogVisible" width="500">
-
+    <!-- 对话框标题 -->
     <ContentHeader content="删除班级"></ContentHeader>
-
+    <!-- 删除提示信息 -->
     <div class="info-message">确定要删除该班级吗？</div>
+    <!-- 对话框底部操作按钮 -->
     <template #footer>
       <div class="dialog-footer">
-        <el-button type="primary" @click="confirmDelete">
-          确定
-        </el-button>
+        <el-button type="primary" @click="confirmDelete">确定</el-button>
         <el-button @click="dialogVisible = false">取消</el-button>
       </div>
     </template>
-
   </el-dialog>
 
+  <!-- 分页组件 -->
   <el-pagination class="foot-pagination"
                  v-model:current-page="currentPage"
                  v-model:page-size="pageSize"
@@ -134,74 +141,24 @@
                  :total="total"
                  @size-change="handleSizeChange"
                  @current-change="handleCurrentChange">
+    <!-- 自定义分页信息显示 -->
     <template #default>
       <span class="el-pagination__total">共{{ total }}条数据</span>
     </template>
+    <!-- 自定义跳转输入框文字 -->
     <template #jumper>
       <span>前往{{ jumper }}页</span>
     </template>
   </el-pagination>
-
 </template>
-
 <script setup>
+// 引入必要的组件和函数
 import ContentHeader from '../../components/ContentHeader.vue';
 import {ElMessage} from 'element-plus';
 import {reactive, ref} from 'vue'
 import apiAxios from '@/api/ApiAxios.js';
 
-function validateName(rule, value) {
-  const pattern = /^[\u4e00-\u9fa5a-zA-Z0-9]+$/;
-  if (!pattern.test(value) && value !== "") {
-    return Promise.reject('输入只能包含汉字、数字和字母！');
-  } else {
-    return Promise.resolve();
-  }
-}
-
-const ruleFormRef = ref()
-
-const rules = reactive({
-  name: [
-    {required: true, message: '请输入班级名称', trigger: 'blur'},
-    {min: 4, max: 30, message: '班级名称长度应为4-30', trigger: 'blur'},
-    {validator: validateName, trigger: 'blur'}
-  ],
-  classroom: [
-    {min: 1, max: 20, message: '教室长度应为1-20', trigger: 'blur'},
-    {validator: validateName, trigger: 'blur'}
-  ],
-  startTime: [
-    {type: 'date', required: true, message: '请选择开课时间', trigger: 'change'},
-    {validator: validateStartTime, trigger: 'change'}
-  ],
-  endTime: [
-    {type: 'date', required: true, message: '请选择结课时间', trigger: 'change'},
-    {validator: validateEndTime, trigger: 'change'}
-  ],
-  teacherId: [
-    {required: true, message: '请选择班主任', trigger: 'change'}
-  ]
-})
-
-function validateStartTime(rule, value, callback) {
-  const endTime = form.value.endTime;
-  if (value && endTime && value >= endTime) {
-    callback(new Error('开课时间应早于结课时间'));
-  } else {
-    callback();
-  }
-}
-
-function validateEndTime(rule, value, callback) {
-  const startTime = form.value.startTime; // 获取开始时间
-  if (value && startTime && value <= startTime) {
-    callback(new Error('结课时间应晚于开课时间'));
-  } else {
-    callback();
-  }
-}
-
+// 表单和页面控制的数据
 const currentPage = ref(1);
 const pageSize = ref(10);
 const total = ref(1);
@@ -213,14 +170,15 @@ const formLabelWidth = '140px'
 let empOptions = [];
 let empMap = {};
 
+// 获取员工列表的函数
 function getEmpList() {
   apiAxios({
     url: '/emps/all',
     method: 'get',
   }).then(res => {
     console.log(res.data);
-    let temp_data = res.data.data;
-    temp_data.forEach(x => {
+    const tempData = res.data.data;
+    tempData.forEach(x => {
       empOptions.push({
         label: x.name,
         value: x.id
@@ -234,6 +192,7 @@ function getEmpList() {
 
 getEmpList();
 
+// 查询表单的数据和班级列表数据
 const formQuery = reactive({
   name: "",
   period: [null, null]
@@ -242,10 +201,10 @@ const formQuery = reactive({
 const tableData = ref([]);
 
 function getClassList() {
-  if (formQuery.period == null) {
+  if (!formQuery.period) {
     formQuery.period = [null, null];
   }
-  let params = {
+  const params = {
     page: currentPage.value,
     pageSize: pageSize.value,
     name: formQuery.name,
@@ -271,11 +230,12 @@ function getClassList() {
 
 getClassList();
 
+// 查询班级列表的提交函数
 const onSubmit = () => {
   getClassList();
 }
 
-// 对按钮的处理
+// 处理保存按钮的函数
 async function handleSave(formEl) {
   if (!formEl) return
   await formEl.validate((valid, fields) => {
@@ -314,6 +274,7 @@ async function handleSave(formEl) {
 
 }
 
+// 处理添加按钮的函数
 function handleAdd() {
   form.value = {
     "id": null,
@@ -327,6 +288,7 @@ function handleAdd() {
   isFormDialogVisible.value = true;
 }
 
+// 处理编辑按钮的函数
 const handleEdit = (index, row) => {
   console.log(index, row)
   apiAxios({
@@ -341,16 +303,19 @@ const handleEdit = (index, row) => {
   dialogContent.value = "修改班级";
   isFormDialogVisible.value = true;
 }
-const temp_id = ref(0);
+
+// 临时存放删除对象ID的变量和处理删除按钮的函数
+const tempId = ref(0);
 const handleDelete = (index, row) => {
   console.log(index, row)
-  temp_id.value = row.id;
+  tempId.value = row.id;
   dialogVisible.value = true;
 }
 
+// 确认删除的函数
 function confirmDelete() {
   apiAxios({
-    url: "/class/" + temp_id.value,
+    url: "/class/" + tempId.value,
     method: "delete",
   }).then(res => {
     console.log(res.data);
@@ -367,6 +332,7 @@ function confirmDelete() {
   })
 }
 
+// 处理分页变化的函数
 const handleSizeChange = (val) => {
   console.log(`${val} items per page`)
   getClassList();

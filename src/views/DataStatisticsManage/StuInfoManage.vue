@@ -6,13 +6,13 @@
 </template>
 
 <script setup>
-import * as echarts from 'echarts';
-import apiAxios from '@/api/ApiAxios.js';
-import {onMounted, ref} from 'vue';
+import * as echarts from 'echarts'; // 导入echarts库
+import apiAxios from '@/api/ApiAxios.js'; // 导入接口请求函数
+import {onMounted} from 'vue'; // 导入Vue的onMounted钩子函数
 
-let echart = echarts;
+let echart = echarts; // 定义echart变量
 
-// 初始化genderchart
+// 初始化性别统计图表
 async function initGenderChart() {
   let label = [];
   let data = [];
@@ -22,7 +22,6 @@ async function initGenderChart() {
       method: 'get'
     })
     for (let key in res.data.data) {
-      console.log(key);
       label.push(key);
       data.push({
         value: res.data.data[key],
@@ -84,8 +83,8 @@ async function initGenderChart() {
   };
 }
 
-// 初始化educationcount
-async function initeducationChart() {
+// 初始化教育经历统计图表
+async function initEducationChart() {
   let label = [];
   let data = [];
   try {
@@ -171,10 +170,10 @@ async function initeducationChart() {
   };
 }
 
+// 在组件挂载后调用初始化函数
 onMounted(() => {
-
   initGenderChart();
-  initeducationChart();
+  initEducationChart();
 })
 </script>
 

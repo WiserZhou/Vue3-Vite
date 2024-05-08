@@ -1,6 +1,9 @@
 <template>
   <div class="mainBox">
+    <!-- 内容标题 -->
     <ContentHeader content="课程管理"></ContentHeader>
+
+    <!-- 查询表单 -->
     <div class="query">
       <el-form :inline="true" :model="queryForm" class="demo-form-inline">
         <el-form-item label="课程名称">
@@ -15,13 +18,19 @@
         </el-form-item>
       </el-form>
     </div>
+
+    <!-- 添加课程按钮 -->
     <el-button type="primary" @click="handleAdd">+&nbsp;添加课程</el-button>
-    <el-button type="primary" @click="handleBatchDel">-&nbsp;批量删除</el-button>
+
+    <!-- 批量删除按钮 -->
+    <el-button type="primary" @click="handleBatchDelete">-&nbsp;批量删除</el-button>
+
+    <!-- 课程信息表格 -->
     <div class="info-table">
       <el-table :data="tableData" style="width: 100%;height: calc(100vh - 300px);" :fit="true"
                 @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center"/>
-        <el-table-column property="courseId" label="课程代码" align="center"/>
+        <el-table-column property="courseId" label="课程编号" align="center"/>
         <el-table-column property="name" label="课程名称" align="center"/>
         <el-table-column property="classRoom" label="上课地点" align="center"/>
         <el-table-column property="attribute" label="课程性质" align="center"/>
@@ -36,6 +45,7 @@
       </el-table>
     </div>
 
+    <!-- 分页器 -->
     <div class="foot-pagination">
       <el-pagination
           v-model:current-page="currentPage"
@@ -53,81 +63,82 @@
         </template>
       </el-pagination>
     </div>
+
+    <!-- 批量删除对话框 -->
+    <el-dialog v-model="dialogBatchVisible" width="500">
+      <ContentHeader content="批量删除课程"></ContentHeader>
+      <div class="info-message">您确定要批量删除这些课程的信息吗 ?</div>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button type="primary" @click="confirmDelete(1)">
+            确定
+          </el-button>
+          <el-button @click="dialogBatchVisible = false">取消</el-button>
+        </div>
+      </template>
+    </el-dialog>
+
+    <!-- 删除课程对话框 -->
+    <el-dialog v-model="dialogVisible" width="500">
+      <ContentHeader content="删除课程"></ContentHeader>
+      <div class="info-message">您确定要删除该课程的信息吗？</div>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button type="primary" @click="confirmDelete(0)">
+            确定
+          </el-button>
+          <el-button @click="dialogVisible = false">取消</el-button>
+        </div>
+      </template>
+    </el-dialog>
+
+    <!-- 添加/编辑课程对话框 -->
+    <el-dialog v-model="dialogFormVisible" width="500">
+      <ContentHeader :content="dialogContent"></ContentHeader>
+      <el-form :model="form" style="margin-top: 15px;" ref="ruleFormRef" :rules="rules">
+        <el-form-item label="课程编号" :label-width="formLabelWidth" prop="courseId">
+          <el-input v-model="form.courseId" placeholder="请输入课程代码" style="width: 280px;"/>
+        </el-form-item>
+        <el-form-item label="课程名称" :label-width="formLabelWidth" prop="name">
+          <el-input v-model="form.name" placeholder="请输入课程名称" style="width: 280px;"/>
+        </el-form-item>
+        <el-form-item label="课程性质" :label-width="formLabelWidth" prop="attribute">
+          <el-select
+              v-model="form.attribute"
+              filterable
+              clearable
+              placeholder="请选择"
+              style="width: 280px;">
+            <el-option
+                v-for="item in attributeOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="上课地点" :label-width="formLabelWidth" prop="classRoom">
+          <el-input v-model="form.classRoom" placeholder="请输入上课地点" style="width: 280px;"/>
+        </el-form-item>
+        <el-form-item label="学分" :label-width="formLabelWidth" prop="score">
+          <el-input v-model="form.score" placeholder="请输入课程学分" @input="handleChange2(form.score)"
+                    style="width: 280px;"/>
+        </el-form-item>
+        <el-form-item label="总学时" :label-width="formLabelWidth" prop="totalTime">
+          <el-input v-model="form.totalTime" placeholder="请输入总学时" @input="handleChange1(form.totalTime)"
+                    style="width: 280px;"/>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button type="primary" @click="handleSave(ruleFormRef)">
+            保存
+          </el-button>
+          <el-button @click="dialogFormVisible = false">取消</el-button>
+        </div>
+      </template>
+    </el-dialog>
+
   </div>
-
-  <el-dialog v-model="dialogBatchVisible" width="500">
-    <ContentHeader content="批量删除课程"></ContentHeader>
-    <div class="info-message">您确定要批量删除这些课程的信息吗 ?</div>
-    <template #footer>
-      <div class="dialog-footer">
-        <el-button type="primary" @click="confirmDelete(1)">
-          确定
-        </el-button>
-        <el-button @click="dialogBatchVisible = false">取消</el-button>
-      </div>
-    </template>
-  </el-dialog>
-
-  <el-dialog
-      v-model="dialogVisible"
-      width="500">
-    <ContentHeader content="删除课程"></ContentHeader>
-    <div class="info-message">您确定要删除该课程的信息吗 ?</div>
-    <template #footer>
-      <div class="dialog-footer">
-        <el-button type="primary" @click="confirmDelete(0)">
-          确定
-        </el-button>
-        <el-button @click="dialogVisible = false">取消</el-button>
-      </div>
-    </template>
-  </el-dialog>
-
-  <el-dialog v-model="dialogFormVisible" width="500">
-    <ContentHeader :content="dialogContent"></ContentHeader>
-    <el-form :model="form" style="margin-top: 15px;" ref="ruleFormRef" :rules="rules">
-      <el-form-item label="课程代码" :label-width="formLabelWidth" prop="courseId">
-        <el-input v-model="form.courseId" placeholder="请输入课程代码" style="width: 280px;"/>
-      </el-form-item>
-      <el-form-item label="课程名称" :label-width="formLabelWidth" prop="name">
-        <el-input v-model="form.name" placeholder="请输入课程名称" style="width: 280px;"/>
-      </el-form-item>
-      <el-form-item label="课程属性" :label-width="formLabelWidth" prop="attribute">
-        <el-select
-            v-model="form.attribute"
-            filterable
-            clearable
-            placeholder="请选择"
-            style="width: 280px;">
-          <el-option
-              v-for="item in attributeOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"/>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="上课地点" :label-width="formLabelWidth" prop="classRoom">
-        <el-input v-model="form.classRoom" placeholder="请输入上课地点" style="width: 280px;"/>
-      </el-form-item>
-      <el-form-item label="学分" :label-width="formLabelWidth" prop="score">
-        <el-input v-model="form.score" placeholder="请输入课程学分" @input="handleChange2(form.score)"
-                  style="width: 280px;"/>
-      </el-form-item>
-      <el-form-item label="总学时" :label-width="formLabelWidth" prop="totalTime">
-        <el-input v-model="form.totalTime" placeholder="请输入总学时" @input="handleChange1(form.totalTime)"
-                  style="width: 280px;"/>
-      </el-form-item>
-    </el-form>
-    <template #footer>
-      <div class="dialog-footer">
-        <el-button type="primary" @click="handleSave(ruleFormRef)">
-          保存
-        </el-button>
-        <el-button @click="dialogFormVisible = false">取消</el-button>
-      </div>
-    </template>
-  </el-dialog>
-
 </template>
 
 <script setup>
@@ -135,8 +146,8 @@ import ContentHeader from '../../components/ContentHeader.vue';
 import apiAxios from '@/api/ApiAxios.js';
 import {ElMessage} from 'element-plus';
 import {reactive, ref} from 'vue';
-import moment from 'moment';
-// 校验规则
+
+// 处理输入改变事件，限制输入内容
 const handleChange1 = (value) => {
   if (!/^[0-9]*$/.test(value)) {
     ElMessage.error("请输入数字！");
@@ -148,15 +159,14 @@ const handleChange1 = (value) => {
     }
   }
 }
+
+// 处理输入改变事件，限制输入内容
 const handleChange2 = (value) => {
-  // 判断输入是否为小数或整数
   if (!/^\d+(\.\d+)?$/.test(value) && value != '') {
     ElMessage.error('请输入小数或整数！');
-    // 移除非数字字符
     form.value.score = value.replace(/[^\d.]/g, '');
   } else {
     const floatValue = parseFloat(value);
-    // 如果大于 10，则将值置为 10
     if (floatValue > 10) {
       ElMessage.error('学分不能大于10！');
       form.value.score = '10';
@@ -164,8 +174,8 @@ const handleChange2 = (value) => {
   }
 }
 
+// 自定义校验规则：用户名只能包含数字和字母
 function validateId(rule, value) {
-  // 使用正则表达式验证用户名是否只包含数字和字母
   const pattern = /^[A-Za-z0-9]+$/;
   if (!pattern.test(value)) {
     return Promise.reject('用户名只能包含数字和字母');
@@ -174,8 +184,8 @@ function validateId(rule, value) {
   }
 }
 
+// 自定义校验规则：姓名只能包含汉字
 function validateName(rule, value) {
-  // 使用正则表达式验证姓名是否只包含汉字
   const pattern = /^[\u4e00-\u9fa5]+$/;
   if (!pattern.test(value)) {
     return Promise.reject('姓名只能包含汉字');
@@ -184,7 +194,7 @@ function validateName(rule, value) {
   }
 }
 
-const ruleFormRef = ref()
+// 表单校验规则
 const rules = reactive({
   courseId: [
     {required: true, message: '请输入课程代码', trigger: 'blur'},
@@ -210,11 +220,10 @@ const rules = reactive({
   ],
 })
 
-// 翻页器变量
+// 初始化数据
 const currentPage = ref(1);
 const pageSize = ref(10);
 const total = ref(1);
-// 选项变量们
 let attributeOptions = [
   {
     label: "必修",
@@ -229,15 +238,14 @@ let attributeMap = {
   1: "必修",
   2: "选修"
 };
-// 这里是查询表单部分
 const queryForm = reactive({
   name: "",
   attribute: null,
   classRoom: null,
 })
-// 这里是获取课程表格数据部分
 const tableData = ref([]);
 
+// 获取课程列表
 function getCourseList() {
   let params = {
     page: currentPage.value,
@@ -246,13 +254,11 @@ function getCourseList() {
     attribute: queryForm.attribute,
     classRoom: queryForm.classRoom
   }
-  console.log(params);
   apiAxios({
     url: '/course',
     method: 'get',
     params
   }).then(res => {
-    console.log(res.data);
     tableData.value = res.data.data.rows;
     tableData.value.forEach(x => {
       x.attribute = attributeMap[x.attribute];
@@ -263,39 +269,32 @@ function getCourseList() {
   })
 }
 
+// 初始化数据
 getCourseList();
 
-// 批量删除框部分
 const dialogBatchVisible = ref(false)
-// 确认删除框部分
 const dialogVisible = ref(false)
-
 const dialogContent = ref("添加课程");
-
 const form = ref({});
-// 设置弹出框是否可见以及内部输入框的width
 const dialogFormVisible = ref(false)
 const formLabelWidth = '140px'
 
-// 对按钮的处理
+// 保存课程信息
 async function handleSave(formEl) {
   if (!formEl) return;
   await formEl.validate((valid, fields) => {
     if (valid) {
-      console.log('submit!')
       let method = '';
       if (dialogContent.value === "添加课程") {
         method = 'post';
       } else if (dialogContent.value === "编辑课程") {
         method = 'put';
       }
-      console.log(form.value);
       apiAxios({
         url: "/course",
         method: method,
         data: form.value,
       }).then(res => {
-        console.log(res.data);
         if (res.data.code) {
           dialogFormVisible.value = false;
           ElMessage({
@@ -316,13 +315,12 @@ async function handleSave(formEl) {
 
 }
 
-
+// 提交查询
 const onSubmit = () => {
-  console.log('submit!')
   getCourseList();
 }
 
-// 添加课程按钮
+// 添加课程
 function handleAdd() {
   form.value = {
     courseId: "",
@@ -336,23 +334,23 @@ function handleAdd() {
   dialogFormVisible.value = true;
 }
 
-// 批量删除按钮
-function handleBatchDel() {
+// 批量删除课程
+function handleBatchDelete() {
   dialogBatchVisible.value = true;
 }
 
-// 处理多选 用于批量删除
+// 选择项变化
 const multipleSelection = ref([])
 const handleSelectionChange = (val) => {
   multipleSelection.value = val;
 }
+
+// 编辑课程
 const handleEdit = (index, row) => {
-  console.log(index, row)
   apiAxios({
     url: "/course/" + row.id,
     method: 'get',
   }).then(res => {
-    console.log(res.data);
     form.value = res.data.data;
   }).catch(err => {
     console.log(err.message);
@@ -360,20 +358,20 @@ const handleEdit = (index, row) => {
   dialogContent.value = "编辑课程";
   dialogFormVisible.value = true;
 }
+
+// 删除课程
 const temp_id = ref(0);
 const handleDelete = (index, row) => {
-  console.log(index, row)
   temp_id.value = row.id;
   dialogVisible.value = true;
 }
 
+// 确认删除
 function confirmDelete(type) {
-  // type为0说明是单个，为1说明是多个。
   let ids = "";
   if (type) {
     multipleSelection.value.forEach(x => {
-      console.log(x.id);
-      if (ids == "") ids = x.id;
+      if (ids === "") ids = x.id;
       else ids += "," + x.id;
     })
   } else {
@@ -383,7 +381,6 @@ function confirmDelete(type) {
     url: "/course/" + ids,
     method: "delete",
   }).then(res => {
-    console.log(res.data);
     if (res.data.code) {
       ElMessage({
         message: '删除成功！',
@@ -396,13 +393,11 @@ function confirmDelete(type) {
   })
 }
 
-// 翻页器
+// 分页器事件
 const handleSizeChange = (val) => {
-  console.log(`${val} items per page`)
   getCourseList();
 }
 const handleCurrentChange = (val) => {
-  console.log(`current page: ${val}`)
   getCourseList();
 }
 
@@ -422,6 +417,7 @@ const handleCurrentChange = (val) => {
 
 .query {
   height: 60px;
+  margin-bottom: 20px;
 }
 
 .demo-form-inline {
@@ -429,18 +425,9 @@ const handleCurrentChange = (val) => {
   padding-top: 20px;
 }
 
-.demo-form-inline .el-input {
-  --el-input-width: 100px;
-}
-
-.demo-form-inline .el-select {
-  --el-select-width: 100px;
-}
-
 .info-table {
   margin-top: 20px;
 }
-
 
 .foot-pagination {
   position: absolute;
