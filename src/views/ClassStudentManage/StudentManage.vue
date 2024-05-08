@@ -56,7 +56,7 @@
 
     <!-- 学员信息表格 -->
     <div class="tableInfo">
-      <el-table :data="tableData" style="width: 100%;height: calc(100vh - 300px);" :fit="true"
+      <el-table :data="tableData" style="width: 100%;height: calc(100vh - 320px);" :fit="true"
                 @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="25" align="center"/>
         <el-table-column property="name" label="姓名" align="center"/>
@@ -106,7 +106,7 @@
       <ContentHeader content="学员违纪处理"></ContentHeader>
       <div>
         <el-form style="margin-top: 15px;">
-          <el-form-item label="违纪扣分" :label-width="formLabelWidth">
+          <el-form-item label="违纪扣分" :label-width="formWidth">
             <el-input v-model="points" style="width: 280px;" @input="handleChange"/>
           </el-form-item>
         </el-form>
@@ -155,13 +155,13 @@
     <el-dialog v-model="dialogFormVisible" width="500">
       <ContentHeader :content="dialogContent"></ContentHeader>
       <el-form :model="form" style="margin-top: 15px;" :rules="rules" :ref="ruleFormRef">
-        <el-form-item label="姓名" :label-width="formLabelWidth" prop="name">
+        <el-form-item label="姓名" :label-width="formWidth" prop="name">
           <el-input v-model="form.name" placeholder="请输入姓名" style="width: 280px;"/>
         </el-form-item>
-        <el-form-item label="学号" :label-width="formLabelWidth" prop="stuId">
+        <el-form-item label="学号" :label-width="formWidth" prop="stuId">
           <el-input v-model="form.stuId" placeholder="请输入学号" style="width: 280px;"/>
         </el-form-item>
-        <el-form-item label="性别" :label-width="formLabelWidth" prop="gender">
+        <el-form-item label="性别" :label-width="formWidth" prop="gender">
           <el-select
               v-model="form.gender"
               filterable
@@ -175,10 +175,10 @@
                 :value="item.value"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="手机号" :label-width="formLabelWidth" prop="telephone">
+        <el-form-item label="手机号" :label-width="formWidth" prop="telephone">
           <el-input v-model="form.telephone" placeholder="请输入手机号" style="width: 280px;"/>
         </el-form-item>
-        <el-form-item label="最高学历" :label-width="formLabelWidth">
+        <el-form-item label="最高学历" :label-width="formWidth">
           <el-select
               v-model="form.education"
               filterable
@@ -192,7 +192,7 @@
                 :value="item.value"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="所属班级" :label-width="formLabelWidth" prop="classId">
+        <el-form-item label="所属班级" :label-width="formWidth" prop="classId">
           <el-select
               v-model="form.classId"
               filterable
@@ -309,7 +309,7 @@ function handlePoints() {
     method: 'put',
     data: {id: points_id.value, points: points.value}
   }).then(res => {
-    if (res.data.code) {
+    if (res.data.code === 200) {
       ElMessage({message: "处理成功", type: "success"});
       disciplineVisible.value = false;
       getStudentList();
@@ -337,7 +337,7 @@ const classMap = {};
 // 获取班级列表
 function getClassList() {
   apiAxios({
-    url: '/class/all',
+    url: '/class/list',
     method: 'get',
   }).then(res => {
     const temp_data = res.data.data;
@@ -399,7 +399,7 @@ const dialogVisible = ref(false);
 const dialogContent = ref("添加学员");
 const form = ref({});
 const dialogFormVisible = ref(false);
-const formLabelWidth = '140px';
+const formWidth = '140px';
 
 // 保存表单
 async function handleSave(formEl) {
@@ -415,7 +415,7 @@ async function handleSave(formEl) {
         method: method,
         data: form.value,
       }).then(res => {
-        if (res.data.code) {
+        if (res.data.code === 200) {
           dialogFormVisible.value = false;
           ElMessage({message: '保存成功！', type: 'success'});
           getStudentList();
@@ -469,7 +469,7 @@ function confirmDelete(type) {
     url: "/student/" + ids,
     method: "delete",
   }).then(res => {
-    if (res.data.code) {
+    if (res.data.code === 200) {
       ElMessage({message: '删除成功！', type: 'success'});
       getStudentList();
       dialogVisible.value = false;

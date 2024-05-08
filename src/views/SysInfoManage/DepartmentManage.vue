@@ -83,9 +83,10 @@ const dateFormatter = (row) => {
 async function getDeptList() {
   try {
     const res = await apiAxios({
-      url: '/depts',
+      url: '/dept',
       method: 'get',
     });
+    console.log(res.data)
     tableData.value = res.data.data;
   } catch (err) {
     console.log(err.message);
@@ -110,11 +111,11 @@ function handleSave() {
       data = {id: temp_id.value, name: name.value};
     }
     apiAxios({
-      url: '/depts',
+      url: '/dept',
       method: method,
       data: data,
     }).then(res => {
-      if (res.data.code) {
+      if (res.data.code === 200) {
         dialogFormVisible.value = false;
         ElMessage({message: '保存成功！', type: 'success'});
         getDeptList();
@@ -151,10 +152,11 @@ const handleDelete = (index, row) => {
 // 确认删除函数
 function confirmDelete() {
   apiAxios({
-    url: '/depts/' + temp_id.value,
+    url: '/dept/' + temp_id.value,
     method: 'delete',
   }).then(res => {
-    if (res.data.code) {
+    console.log(res.data)
+    if (res.data.code === 200) {
       ElMessage({message: "删除成功!", type: 'success'});
       dialogVisible.value = false;
       getDeptList();

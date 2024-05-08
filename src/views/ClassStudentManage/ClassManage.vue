@@ -65,15 +65,15 @@
     <!-- 表单内容，用于添加或编辑班级信息 -->
     <el-form :model="form" style="margin-top: 15px;" ref="ruleFormRef" :rules="rules">
       <!-- 班级名称输入 -->
-      <el-form-item label="班级名称" :label-width="formLabelWidth" prop="name">
+      <el-form-item label="班级名称" :label-width="formWidth" prop="name">
         <el-input v-model="form.name" placeholder="请输入班级名称，如：2024第01期10班" style="width: 280px;"/>
       </el-form-item>
       <!-- 班级教室输入 -->
-      <el-form-item label="班级教室" :label-width="formLabelWidth" prop="classroom">
+      <el-form-item label="班级教室" :label-width="formWidth" prop="classroom">
         <el-input v-model="form.classroom" placeholder="请填写班级教室" style="width: 280px;"/>
       </el-form-item>
       <!-- 开课时间选择 -->
-      <el-form-item label="开课时间" :label-width="formLabelWidth" prop="startTime">
+      <el-form-item label="开课时间" :label-width="formWidth" prop="startTime">
         <el-date-picker
             v-model="form.startTime"
             type="date"
@@ -83,7 +83,7 @@
             value-format="YYYY-MM-DD"/>
       </el-form-item>
       <!-- 结课时间选择 -->
-      <el-form-item label="结课时间" :label-width="formLabelWidth" prop="endTime">
+      <el-form-item label="结课时间" :label-width="formWidth" prop="endTime">
         <el-date-picker
             v-model="form.endTime"
             type="date"
@@ -93,7 +93,7 @@
             value-format="YYYY-MM-DD"/>
       </el-form-item>
       <!-- 班主任下拉选择 -->
-      <el-form-item label="班主任" :label-width="formLabelWidth" prop="teacherId">
+      <el-form-item label="班主任" :label-width="formWidth" prop="teacherId">
         <el-select
             v-model="form.teacherId"
             filterable
@@ -166,14 +166,42 @@ const dialogVisible = ref(false)
 const dialogContent = ref("新增班级");
 const form = ref({});
 const isFormDialogVisible = ref(false)
-const formLabelWidth = '140px'
+const formWidth = '140px'
 let empOptions = [];
 let empMap = {};
+
+// 使用 reactive 创建响应式对象
+const ruleFormRef = reactive({
+  name: '',
+  classroom: '',
+  startTime: '',
+  endTime: '',
+  teacherId: ''
+});
+
+// 表单校验规则
+const rules = reactive({
+  name: [
+    { required: true, message: '请输入班级名称', trigger: 'blur' }
+  ],
+  classroom: [
+    { required: true, message: '请输入班级教室', trigger: 'blur' }
+  ],
+  startTime: [
+    { required: true, message: '请选择开课时间', trigger: 'change' }
+  ],
+  endTime: [
+    { required: true, message: '请选择结课时间', trigger: 'change' }
+  ],
+  teacherId: [
+    { required: true, message: '请选择班主任', trigger: 'change' }
+  ]
+});
 
 // 获取员工列表的函数
 function getEmpList() {
   apiAxios({
-    url: '/emps/all',
+    url: '/emp/list',
     method: 'get',
   }).then(res => {
     console.log(res.data);
@@ -253,8 +281,9 @@ async function handleSave(formEl) {
         method: method,
         data: form.value,
       }).then(res => {
+
         console.log(res.data);
-        if (res.data.code) {
+        if (res.data.code === 200) {
           isFormDialogVisible.value = false;
           ElMessage({
             message: '保存成功！',
@@ -295,6 +324,7 @@ const handleEdit = (index, row) => {
     url: "/class/" + row.id,
     method: 'get',
   }).then(res => {
+    console.log("handleEdit")
     console.log(res.data);
     form.value = res.data.data;
   }).catch(err => {
@@ -319,7 +349,7 @@ function confirmDelete() {
     method: "delete",
   }).then(res => {
     console.log(res.data);
-    if (res.data.code) {
+    if (res.data.code === 200) {
       ElMessage({
         message: '删除成功！',
         type: 'success',

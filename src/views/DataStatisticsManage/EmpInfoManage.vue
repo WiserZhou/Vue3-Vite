@@ -18,7 +18,7 @@ async function initGenderChart() {
   let data = [];
   try {
     const res = await apiAxios({
-      url: "/emps/genderCount",
+      url: "/emp/genderCount",
       method: 'get'
     })
     for (let key in res.data.data) {
@@ -90,7 +90,7 @@ async function initJobChart() {
   let data = [];
   try {
     const res = await apiAxios({
-      url: "/emps/jobCount",
+      url: "/emp/jobCount",
       method: 'get'
     })
     for (let key in res.data.data) {

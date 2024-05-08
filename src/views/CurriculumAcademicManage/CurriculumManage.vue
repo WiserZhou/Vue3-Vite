@@ -27,7 +27,7 @@
 
     <!-- 课程信息表格 -->
     <div class="info-table">
-      <el-table :data="tableData" style="width: 100%;height: calc(100vh - 300px);" :fit="true"
+      <el-table :data="tableData" style="width: 100%;height: calc(100vh - 320px);" :fit="true"
                 @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center"/>
         <el-table-column property="courseId" label="课程编号" align="center"/>
@@ -96,13 +96,13 @@
     <el-dialog v-model="dialogFormVisible" width="500">
       <ContentHeader :content="dialogContent"></ContentHeader>
       <el-form :model="form" style="margin-top: 15px;" ref="ruleFormRef" :rules="rules">
-        <el-form-item label="课程编号" :label-width="formLabelWidth" prop="courseId">
+        <el-form-item label="课程编号" :label-width="formWidth" prop="courseId">
           <el-input v-model="form.courseId" placeholder="请输入课程代码" style="width: 280px;"/>
         </el-form-item>
-        <el-form-item label="课程名称" :label-width="formLabelWidth" prop="name">
+        <el-form-item label="课程名称" :label-width="formWidth" prop="name">
           <el-input v-model="form.name" placeholder="请输入课程名称" style="width: 280px;"/>
         </el-form-item>
-        <el-form-item label="课程性质" :label-width="formLabelWidth" prop="attribute">
+        <el-form-item label="课程性质" :label-width="formWidth" prop="attribute">
           <el-select
               v-model="form.attribute"
               filterable
@@ -116,14 +116,14 @@
                 :value="item.value"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="上课地点" :label-width="formLabelWidth" prop="classRoom">
+        <el-form-item label="上课地点" :label-width="formWidth" prop="classRoom">
           <el-input v-model="form.classRoom" placeholder="请输入上课地点" style="width: 280px;"/>
         </el-form-item>
-        <el-form-item label="学分" :label-width="formLabelWidth" prop="score">
+        <el-form-item label="学分" :label-width="formWidth" prop="score">
           <el-input v-model="form.score" placeholder="请输入课程学分" @input="handleChange2(form.score)"
                     style="width: 280px;"/>
         </el-form-item>
-        <el-form-item label="总学时" :label-width="formLabelWidth" prop="totalTime">
+        <el-form-item label="总学时" :label-width="formWidth" prop="totalTime">
           <el-input v-model="form.totalTime" placeholder="请输入总学时" @input="handleChange1(form.totalTime)"
                     style="width: 280px;"/>
         </el-form-item>
@@ -220,6 +220,16 @@ const rules = reactive({
   ],
 })
 
+const ruleFormRef = reactive({
+  id: '',
+  courseId: '',
+  name: '',
+  attribute: '',
+  classRoom: '',
+  score: '',
+  totalTime: ''
+})
+
 // 初始化数据
 const currentPage = ref(1);
 const pageSize = ref(10);
@@ -259,6 +269,7 @@ function getCourseList() {
     method: 'get',
     params
   }).then(res => {
+    console.log(res.data)
     tableData.value = res.data.data.rows;
     tableData.value.forEach(x => {
       x.attribute = attributeMap[x.attribute];
@@ -277,7 +288,7 @@ const dialogVisible = ref(false)
 const dialogContent = ref("添加课程");
 const form = ref({});
 const dialogFormVisible = ref(false)
-const formLabelWidth = '140px'
+const formWidth = '140px'
 
 // 保存课程信息
 async function handleSave(formEl) {
@@ -290,12 +301,15 @@ async function handleSave(formEl) {
       } else if (dialogContent.value === "编辑课程") {
         method = 'put';
       }
+      console.log(method)
+      console.log(form.value)
       apiAxios({
         url: "/course",
         method: method,
         data: form.value,
       }).then(res => {
-        if (res.data.code) {
+        console.log(res.data)
+        if (res.data.code === 200) {
           dialogFormVisible.value = false;
           ElMessage({
             message: '保存成功！',
@@ -351,6 +365,7 @@ const handleEdit = (index, row) => {
     url: "/course/" + row.id,
     method: 'get',
   }).then(res => {
+    console.log(res.data)
     form.value = res.data.data;
   }).catch(err => {
     console.log(err.message);
@@ -381,7 +396,7 @@ function confirmDelete(type) {
     url: "/course/" + ids,
     method: "delete",
   }).then(res => {
-    if (res.data.code) {
+    if (res.data.code === 200) {
       ElMessage({
         message: '删除成功！',
         type: 'success',

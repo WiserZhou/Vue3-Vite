@@ -59,7 +59,8 @@
         <!-- 照片列 -->
         <el-table-column label="照片" align="center" width="250">
           <template #default="scope">
-            <img :src="scope.row.image" alt="" style="width: 100px; height: 100px;">
+            <img :src="scope.row.image" alt="用户头像"
+                 style="width: 100px; height: 100px;">
           </template>
         </el-table-column>
         <!-- 性别列 -->
@@ -152,16 +153,16 @@
       <!-- 表单内容 -->
       <el-form :model="form" style="margin-top: 15px;" ref="ruleFormRef" :rules="rules">
         <!-- 用户名输入框 -->
-        <el-form-item label="用户名" :label-width="formLabelWidth" prop="username">
+        <el-form-item label="用户名" :label-width="formWidth" prop="username">
           <el-input v-model="form.username" :disabled="username_disabled" placeholder="请输入用户名，2-20字符，不可重复"
                     style="width: 280px;"/>
         </el-form-item>
         <!-- 员工姓名输入框 -->
-        <el-form-item label="员工姓名" :label-width="formLabelWidth" prop="name">
+        <el-form-item label="员工姓名" :label-width="formWidth" prop="name">
           <el-input v-model="form.name" placeholder="请输入员工姓名，2-10个字" style="width: 280px;"/>
         </el-form-item>
         <!-- 性别选择框 -->
-        <el-form-item label="性别" :label-width="formLabelWidth" prop="gender">
+        <el-form-item label="性别" :label-width="formWidth" prop="gender">
           <el-select
               v-model="form.gender"
               filterable
@@ -179,12 +180,12 @@
           </el-select>
         </el-form-item>
         <!-- 图片上传 -->
-        <el-form-item label="图 像" :label-width="formLabelWidth">
-          <img :src="form.image" alt="" @click="inputClick" class="img-style">
+        <el-form-item label="图&nbsp;&nbsp;像" :label-width="formWidth">
+          <img :src="form.image" alt="用户头像" @click="inputClick" class="img-style">
           <input type="file" name="image" ref="fileInput" @change="handleUpload" v-show="false">
         </el-form-item>
         <!-- 职位选择框 -->
-        <el-form-item label="职位" :label-width="formLabelWidth">
+        <el-form-item label="职位" :label-width="formWidth">
           <el-select
               v-model="form.job"
               filterable
@@ -202,7 +203,7 @@
           </el-select>
         </el-form-item>
         <!-- 入职日期选择器 -->
-        <el-form-item label="入职日期" :label-width="formLabelWidth">
+        <el-form-item label="入职日期" :label-width="formWidth">
           <el-date-picker
               v-model="form.entryDate"
               type="date"
@@ -214,7 +215,7 @@
           />
         </el-form-item>
         <!-- 归属部门选择框 -->
-        <el-form-item label="归属部门" :label-width="formLabelWidth">
+        <el-form-item label="归属部门" :label-width="formWidth">
           <el-select
               v-model="form.deptId"
               filterable
@@ -236,7 +237,7 @@
       <template #footer>
         <div class="dialog-footer">
           <!-- 保存按钮 -->
-          <el-button type="primary" @click="handleSave(ruleFormRef)">
+          <el-button type="primary" @click="handleSave">
             保存
           </el-button>
           <!-- 取消按钮 -->
@@ -282,7 +283,7 @@ const dialogVisible = ref(false);
 const dialogContent = ref("新增员工");
 const form = ref();
 const dialogFormVisible = ref(false);
-const formLabelWidth = '140px';
+const formWidth = '140px';
 const queryForm = reactive({
   name: null,
   gender: null,
@@ -325,7 +326,7 @@ async function getEmpList() {
       end: queryForm.entryDate[1],
     };
     const res = await apiAxios({
-      url: '/emps',
+      url: '/emp',
       method: 'get',
       params
     });
@@ -415,7 +416,7 @@ const handleSelectionChange = (val) => {
 const handleEdit = async (index, row) => {
   try {
     form.value = (await apiAxios({
-      url: "/emps/" + row.id,
+      url: "/emp/" + row.id,
       method: 'get',
     })).data.data;
   } catch (err) {
@@ -433,34 +434,6 @@ const handleDelete = (index, row) => {
   dialogVisible.value = true;
 };
 
-// 确认删除方法
-function confirmDelete(type) {
-  let ids = "";
-  if (type) {
-    multipleSelection.value.forEach(x => {
-      if (ids === "") ids = x.id;
-      else ids += "," + x.id;
-    });
-  } else {
-    ids = temp_id.value;
-  }
-  apiAxios({
-    url: "/emps/" + ids,
-    method: "delete",
-  }).then(res => {
-    if (res.data.code) {
-      ElMessage({
-        message: '删除成功！',
-        type: 'success',
-      });
-      getEmpList();
-      dialogVisible.value = false;
-      dialogBatchVisible.value = false;
-    } else {
-      ElMessage.error(res.data.msg);
-    }
-  });
-}
 
 // 分页大小改变方法
 const handleSizeChange = (val) => {
@@ -494,7 +467,7 @@ function handleUpload() {
   const formData = new FormData();
   formData.append('image', file);
   apiAxios({
-    url: '/emps/upload',
+    url: '/emp/upload',
     method: 'post',
     data: formData,
     headers: {
@@ -505,6 +478,54 @@ function handleUpload() {
   }).catch(err => {
     console.log(err.message);
   });
+}
+
+// 确认删除方法
+function confirmDelete(type) {
+  let ids = "";
+  if (type) {
+    multipleSelection.value.forEach(x => {
+      if (ids === "") ids = x.id;
+      else ids += "," + x.id;
+    });
+  } else {
+    ids = temp_id.value;
+  }
+  apiAxios({
+    url: "/emp/" + ids,
+    method: "delete",
+  }).then(res => {
+    if (res.data.code === 200) {
+      ElMessage({
+        message: '删除成功！',
+        type: 'success',
+      });
+      getEmpList();
+      dialogVisible.value = false;
+      dialogBatchVisible.value = false;
+    } else {
+      ElMessage.error(res.data.msg);
+    }
+  });
+}
+
+function handleSave() {
+  apiAxios({
+    url: '/emp',
+    method: 'post',
+    data: form.value,
+  }).then(res => {
+    if (res.data.code === 200) {
+      ElMessage({
+        message: '添加成功！',
+        type: 'success',
+      });
+      getEmpList();
+      dialogFormVisible.value = false;
+    } else {
+      ElMessage.error(res.data.msg);
+    }
+  })
 }
 </script>
 
@@ -539,14 +560,6 @@ function handleUpload() {
 
 .dialog-footer {
   text-align: center;
-  margin-top: 20px;
-}
-
-.el-button + .el-button {
-  margin-left: 15px;
-}
-
-.el-pagination {
   margin-top: 20px;
 }
 </style>

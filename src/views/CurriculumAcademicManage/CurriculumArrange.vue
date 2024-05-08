@@ -25,7 +25,7 @@
 
     <!-- 课程信息表格 -->
     <div class="info-table">
-      <el-table :data="tableData" style="width: 100%;height: calc(100vh - 300px);" :fit="true"
+      <el-table :data="tableData" style="width: 100%;height: calc(100vh - 330px);" :fit="true"
                 @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center"/>
         <el-table-column property="courseNo" label="课程代码" align="center"/>
@@ -83,13 +83,13 @@
     <el-dialog v-model="dialogFormVisible" width="500">
       <ContentHeader content="编辑"></ContentHeader>
       <el-form :model="form" style="margin-top: 15px;" ref="ruleFormRef" :rules="rules">
-        <el-form-item label="* 课程代码" :label-width="formLabelWidth">
+        <el-form-item label="* 课程代码" :label-width="formWidth">
           <el-input v-model="form.courseNo" placeholder="请输入课程代码" :disabled="true" style="width: 280px;"/>
         </el-form-item>
-        <el-form-item label="* 课程名称" :label-width="formLabelWidth">
+        <el-form-item label="* 课程名称" :label-width="formWidth">
           <el-input v-model="form.courseName" placeholder="请输入课程名称" :disabled="true" style="width: 280px;"/>
         </el-form-item>
-        <el-form-item label="授课教师" :label-width="formLabelWidth">
+        <el-form-item label="授课教师" :label-width="formWidth">
           <el-select v-model="form.teachersId" filterable clearable multiple placeholder="请选择" style="width: 280px;"
                      @change="test()">
             <el-option v-for="item in empList" :key="item.value" :label="item.label" :value="item.value"/>
@@ -125,7 +125,7 @@ const empMap = {};
 async function getEmpList() {
   try {
     const res = await apiAxios({
-      url: '/emps/all',
+      url: '/emp/list',
       method: 'get',
     });
     empList.value = res.data.data.map(item => {
@@ -160,11 +160,12 @@ async function getCourseList() {
       teacher: queryForm.teacher
     };
     const res = await apiAxios({
-      url: '/courseArrange',
+      url: '/courseTeachers',
       method: 'get',
       params
     });
-    if (res.data.code) {
+    if (res.data.code === 200) {
+      console.log(res.data)
       tableData.value = res.data.data.rows.map(row => {
         if (row.teacherIds) {
           row.teachersId = row.teacherIds.split(",").map(Number);
@@ -200,14 +201,15 @@ const form = ref({});
 // 保存编辑的课程信息
 function handleSave() {
   apiAxios({
-    url: "/courseArrange",
+    url: "/courseTeachers",
     method: 'post',
     data: {
       courseId: form.value.courseId,
       teachersId: form.value.teachersId
     }
   }).then(res => {
-    if (res.data.code) {
+    if (res.data.code === 200) {
+      console.log(res.data)
       dialogFormVisible.value = false;
       ElMessage({
         message: '保存成功！',
@@ -258,7 +260,7 @@ function confirmDelete(type) {
     url: "/course/" + ids,
     method: "delete",
   }).then(res => {
-    if (res.data.code) {
+    if (res.data.code === 200) {
       ElMessage({
         message: '删除成功！',
         type: 'success',
